@@ -12,7 +12,7 @@ $(() => {
 });
 
 $(() => {
-  $.get('http://0.0.0.0:5001/api/v1/status/', function (data, status) {
+  $.get('http://localhost:5001/api/v1/status/', function (data, status) {
     if (status === 'success' && data.status === 'OK') {
       $('#api_status').addClass('available');
       // alert('online');
