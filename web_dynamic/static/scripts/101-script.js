@@ -196,3 +196,4 @@ function formatDate (datetimeString) {
   const formattedDate = `${day}${suffix} of ${months[monthIndex]} ${year}`;
 
   return formattedDate;
+}
