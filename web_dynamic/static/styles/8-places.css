@@ -101,3 +101,27 @@
 .user {
   margin-bottom: 1.5%;
 }
+
+.reviews h2 {
+    display: flex;
+    align-items: flex-end;
+    border-top: 1px solid #DDDDDD;
+    border-bottom: 1px solid #DDDDDD;
+    margin-bottom: 5%;
+    margin-top: 5%;
+    padding-top: 5%;
+    padding-bottom: 5%;
+}
+
+.reviews {
+    display: block; 
+}
+
+.description {
+    margin-bottom: 5%;
+}
+
+.reviews h2 span {
+    font-size: 15px;
+    color: #000000;
+}
