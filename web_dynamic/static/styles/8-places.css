@@ -125,3 +125,10 @@
     font-size: 15px;
     color: #000000;
 }
+
+.show_hide {
+    cursor: pointer; 
+}
+.reviews ul li {
+    margin-bottom: 5%;
+}

@@ -10,16 +10,23 @@ $(() => {
       $('#api_status').removeClass('available');
     }
   });
-});
 
-let amenitiesList = [];
-let citiesList = [];
-let statesList = [];
-let selectedCitiesStates = [];
+  // eslint-disable-next-line no-undef
+  $('BUTTON.search_btn').click(function () {
+    requestAminities({
+      amenities: amenitiesList.map(amenity => amenity.id),
+      states: statesList.map(state => state.id),
+      cities: citiesList.map(city => city.id)
+    });
+  });
 
-// Manages amenities selection and updates UI accordingly.
-// eslint-disable-next-line no-undef
-$(() => {
+  let amenitiesList = [];
+  let citiesList = [];
+  let statesList = [];
+  let selectedCitiesStates = [];
+
+  // Manages amenities selection and updates UI accordingly.
+  // eslint-disable-next-line no-undef
   // eslint-disable-next-line no-undef
   $('.amenity_checkbox').change(function () {
     if (this.checked) {
@@ -29,18 +36,10 @@ $(() => {
     }
     // eslint-disable-next-line no-undef
     $('.amenities h4').text(amenitiesList.map(amenity => `${amenity.name}`).join(', '));
-
-    requestAminities({
-      amenities: amenitiesList.map(amenity => amenity.id),
-      states: statesList.map(state => state.id),
-      cities: citiesList.map(city => city.id)
-    });
   });
-});
 
-// Manages states selection and updates UI accordingly.
-// eslint-disable-next-line no-undef
-$(() => {
+  // Manages states selection and updates UI accordingly.
+  // eslint-disable-next-line no-undef
   // eslint-disable-next-line no-undef
   $('.state_checkbox').change(function () {
     // eslint-disable-next-line no-undef
@@ -57,18 +56,10 @@ $(() => {
 
     // eslint-disable-next-line no-undef
     $('.locations h4').text(newText);
-
-    requestAminities({
-      amenities: amenitiesList.map(amenity => amenity.id),
-      states: statesList.map(state => state.id),
-      cities: citiesList.map(city => city.id)
-    });
   });
-});
 
-// Manages cities selection and updates UI accordingly.
-// eslint-disable-next-line no-undef
-$(() => {
+  // Manages cities selection and updates UI accordingly.
+  // eslint-disable-next-line no-undef
   // eslint-disable-next-line no-undef
   $('.city_checkbox').change(function () {
     // eslint-disable-next-line no-undef
@@ -85,17 +76,15 @@ $(() => {
 
     // eslint-disable-next-line no-undef
     $('.locations h4').text(newText);
-
-    requestAminities({
-      amenities: amenitiesList.map(amenity => amenity.id),
-      states: statesList.map(state => state.id),
-      cities: citiesList.map(city => city.id)
-    });
   });
+  requestAminities();
 });
 
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 // dict should be like: { states: statesList, cities: citiesList, amenities: amenitiesList}
-requestAminities();
 function requestAminities (dict = {}) {
   // eslint-disable-next-line no-undef
   $.ajax({
@@ -124,13 +113,11 @@ async function getUserName (userId) {
 
   return (user.first_name + ' ' + user.last_name);
 }
+
 async function loadPlaces (response) {
   // console.log(response.length);
   for (let i = 0; i < response.length; i++) {
     const place = response[i];
-
-    const reviews = await getReviews(place.id);
-    const length = reviews.length;
 
     // eslint-disable-next-line no-undef
     $('DIV.place_items').append(`
@@ -153,19 +140,31 @@ async function loadPlaces (response) {
               </div>
               <div class="description">${place.description}</div>
               <div class=reviews>
-                <h2>${length} Reviews <span href="javascript:void(0);" onclick="ToggleBox(); data-id=${place.id}">Show</span></h2>
-                <ul>
+                <h2> Reviews <span class="show_hide_${place.id}" onclick="addReviewsHtml();" data-id="${place.id}" >Show</span></h2>
+                <ul class="${place.id}" style="display: none">
                 </ul>
               </div>
             </article>
           </div>
           `);
+  }
+}
+
+async function addReviewsHtml () {
+  const placeId = event.target.dataset.id;
+  // eslint-disable-next-line no-undef
+  $(`.${placeId}`).slideToggle();
+
+  if ($(`.${placeId}`).has('*').length === 0) {
+    const reviews = await getReviews(event.target.dataset.id);
 
     reviews.forEach(async function (review) {
       const userName = await getUserName(review.user_id);
 
+      console.log(placeId);
+
       // eslint-disable-next-line no-undef
-      $('DIV.reviews UL').append(`
+      $(`.${placeId}`).append(`
                     <li>
                       <h3>From ${userName} the ${formatDate(review.updated_at)}</h3>
                       <p>${review.text}</p>
@@ -173,11 +172,13 @@ async function loadPlaces (response) {
       `);
     });
   }
-}
-
-function ToggleBox () {
-  // eslint-disable-next-line no-undef
-  $('.reviews UL').slideToggle();
+  if ($(`.show_hide_${placeId}`).text() === 'Show') {
+    console.log('is is show');
+    $(`.show_hide_${placeId}`).text('Hide');
+  } else {
+    $(`.show_hide_${placeId}`).text('Show');
+    console.log('is is not show');
+  }
 }
 
 function formatDate (datetimeString) {
